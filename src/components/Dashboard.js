@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import {useNavigate} from "react-router-dom"
 import axiosConfig from '../service/axiosConfig.js';
 import DataTable from 'react-data-table-component';
-import { GrFormEdit } from 'react-icons/gr';
+import { GrFormEdit, GrView } from 'react-icons/gr';
 import { Modal, Button } from 'react-bootstrap';
 
 const Dashboard = () => {
@@ -31,8 +32,16 @@ const Dashboard = () => {
       ignoreRowClick: true,
       allowOverflow: true,
       button: true,
+    },
+    {
+      name: 'View',
+      cell: (row) => <GrView onClick={() => handleView(row)} />,
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
     }
   ];
+  const navigate = useNavigate();
 
   const handleEdit = (row) => {
     setShowModal(true);
@@ -57,6 +66,10 @@ const Dashboard = () => {
     setShowModal(false);
   };
 
+  const handleView = (row) => {
+  navigate(`/user_details/${row.id}`);
+};
+
   const getUsers = () => {
     const getProfileUrl = `/get/user`;
     axiosConfig.get(getProfileUrl)
@@ -72,7 +85,7 @@ const Dashboard = () => {
   const handleEditUser = () => {
     console.log("edited data:", editedData)
     axiosConfig
-      .patch(`/user/editUserProfile/${editedData.id}`)
+      .put(`/user/editUserProfile/${editedData.id}`)
       .then((response) => {
         console.log(response.data);
         handleCloseModal();
